@@ -1,0 +1,11 @@
+{
+    "Header": {
+        "dashboard": "Dashboard",
+        "login": "Login",
+        "startConsultation": "Start a Consultation"
+    },
+    "Hero": {
+        "title": "Your Personal AI Health Assistant",
+        "subtitle": "Get instant medical advice and health insights."
+    }
+}

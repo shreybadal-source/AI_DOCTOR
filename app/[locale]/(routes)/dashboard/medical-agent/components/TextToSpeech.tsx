@@ -6,6 +6,7 @@ interface TextToSpeechProps {
   text: string;
   voiceId?: string;
   doctorId?: number;
+  locale?: string;
   onSpeakingStart: () => void;
   onSpeakingEnd: () => void;
   onError: (error: string) => void;
@@ -19,6 +20,7 @@ const TextToSpeech = forwardRef<TextToSpeechRef, TextToSpeechProps>(({
   text,
   voiceId = 'will',
   doctorId,
+  locale,
   onSpeakingStart,
   onSpeakingEnd,
   onError
@@ -254,6 +256,14 @@ const TextToSpeech = forwardRef<TextToSpeechRef, TextToSpeechProps>(({
             onSpeakingEnd();
             resolve();
           };
+
+          if (locale === 'hi') {
+            utterance.lang = 'hi-IN';
+          } else if (locale === 'kn') {
+            utterance.lang = 'kn-IN';
+          } else {
+            utterance.lang = 'en-US';
+          }
 
           window.speechSynthesis.speak(utterance);
         } else {

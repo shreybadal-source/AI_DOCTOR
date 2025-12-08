@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import Drawer from './drawer';
 import { UserButton } from '@clerk/nextjs';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 const menuItems = [
   {
@@ -59,6 +60,7 @@ function AppHeader() {
               ))}
             </nav>
             <div className="gap-2 flex items-center justify-center">
+              <LanguageSwitcher />
               <UserButton />
             </div>
           </div>

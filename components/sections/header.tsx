@@ -7,10 +7,13 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useUser, UserButton } from "@clerk/nextjs";
+import { useTranslations } from 'next-intl';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 export default function Header() {
   const [addBorder, setAddBorder] = useState(false);
   const { user } = useUser();
+  const t = useTranslations('Header');
 
   useEffect(() => {
     const handleScroll = () => {
@@ -48,11 +51,12 @@ export default function Header() {
           <div className="flex items-center ">
 
             <div className="gap-2 flex">
+              <LanguageSwitcher />
               <Link
                 href={user ? "/dashboard" : "/sign-in"}
                 className={buttonVariants({ variant: "outline" })}
               >
-                {user ? "Dashboard" : "Login"}
+                {user ? t('dashboard') : t('login')}
               </Link>
               {user && (
                 <UserButton />
@@ -66,7 +70,7 @@ export default function Header() {
                   )}
                 >
                   <Icons.logo className="h-6 w-6" />
-                  Start a Consultation
+                  {t('startConsultation')}
                 </Link>
               )
               }
@@ -80,8 +84,9 @@ export default function Header() {
               href={user ? "/dashboard" : "/sign-in"}
               className={buttonVariants({ variant: "outline" })}
             >
-              {user ? "Dashboard" : "Login"}
+              {user ? t('dashboard') : t('login')}
             </Link>
+            <LanguageSwitcher />
             <UserButton />
           </div>
         </div>

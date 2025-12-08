@@ -1,10 +1,10 @@
 import { type Metadata } from 'next'
-import {
-  ClerkProvider,
-} from '@clerk/nextjs'
-
+import { ClerkProvider } from '@clerk/nextjs'
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import { NextIntlClientProvider } from 'next-intl';
+import { getMessages } from 'next-intl/server';
+import { Analytics } from "@vercel/analytics/react";
+import "../globals.css";
 import Provider from './provider';
 import Chatbot from '@/components/Chatbot';
 
@@ -23,19 +23,27 @@ export const metadata: Metadata = {
   description: "AI Docter voice agent which can help you to get the best treatment for your health",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
+  params
+}: {
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const messages = await getMessages();
+
   return (
     <ClerkProvider>
-      <html lang="en">
+      <html lang={locale}>
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased overflow-x-hidden`} suppressHydrationWarning>
-          <Provider>
-            {children}
-            <Chatbot />
-          </Provider>
+          <NextIntlClientProvider messages={messages}>
+            <Provider>
+              {children}
+              <Chatbot />
+              <Analytics />
+            </Provider>
+          </NextIntlClientProvider>
         </body>
       </html>
     </ClerkProvider>

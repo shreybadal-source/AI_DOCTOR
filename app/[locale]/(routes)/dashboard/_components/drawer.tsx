@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/drawer";
 import Link from "next/link";
 import { IoMenuSharp } from "react-icons/io5";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 const menuItems = [
   {
@@ -51,6 +52,9 @@ export default function Drawer() {
                 </span>
               </Link>
             ))}
+            <div className="mt-4">
+              <LanguageSwitcher />
+            </div>
           </div>
         </DrawerHeader>
       </DrawerContent>

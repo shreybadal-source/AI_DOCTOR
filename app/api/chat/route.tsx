@@ -3,7 +3,7 @@ import { openai, generateFallbackResponse } from "@/shared/OpenAiModel";
 
 export async function POST(request: NextRequest) {
   try {
-    const { messages, doctorPrompt } = await request.json();
+    const { messages, doctorPrompt, locale } = await request.json();
 
     if (!messages || !Array.isArray(messages)) {
       return NextResponse.json({ error: "Messages are required and must be an array" }, { status: 400 });
@@ -21,9 +21,16 @@ export async function POST(request: NextRequest) {
     - If a user asks "where is my report", direct them to the History page.
     `;
 
+    let languageInstruction = "Please communicate in English.";
+    if (locale === 'hi') {
+      languageInstruction = "You MUST reply deeply in Hindi (हिंदी). Use Devanagari script.";
+    } else if (locale === 'kn') {
+      languageInstruction = "You MUST reply deeply in Kannada (ಕನ್ನಡ). Use Kannada script.";
+    }
+
     const systemMessage = {
       role: "system",
-      content: (doctorPrompt || "You are a helpful AI medical assistant. Provide concise, accurate medical information.") + appKnowledge + " Remember that you are not a replacement for professional medical advice, diagnosis, or treatment."
+      content: (doctorPrompt || "You are a helpful AI medical assistant. Provide concise, accurate medical information.") + appKnowledge + ` ${languageInstruction} Remember that you are not a replacement for professional medical advice, diagnosis, or treatment.`
     };
 
     const apiMessages = [

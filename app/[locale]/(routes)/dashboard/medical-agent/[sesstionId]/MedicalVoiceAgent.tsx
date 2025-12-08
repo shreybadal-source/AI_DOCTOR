@@ -14,6 +14,7 @@ import VoiceRecordButton from '../components/VoiceRecordButton'
 import TranscriptionLoading from '../components/TranscriptionLoading'
 import MedicalReport from '../components/MedicalReport'
 import { convertAudioToText } from '../services/speechToText'
+import { useLocale } from 'next-intl';
 
 type Session = {
   id: number
@@ -26,6 +27,7 @@ type Session = {
 
 function MedicalVoiceAgent() {
   const { sesstionId } = useParams()
+  const locale = useLocale();
 
 
   const [session, setSession] = useState<Session>()
@@ -356,6 +358,7 @@ function MedicalVoiceAgent() {
             text={currentAssistantText}
             voiceId={session?.selectedDocter?.voiceId}
             doctorId={doctorId}
+            locale={locale}
             onSpeakingStart={handleSpeakingStart}
             onSpeakingEnd={handleSpeakingEnd}
             onError={handleError}
@@ -366,6 +369,7 @@ function MedicalVoiceAgent() {
             isCallActive={isCallActive}
             doctorPrompt={doctorPrompt}
             sessionId={sesstionId as string}
+            locale={locale}
             onNewMessage={handleNewMessage}
             onError={handleError}
           />

@@ -14,7 +14,7 @@ import { Textarea } from "@/components/ui/textarea"
 
 import React, { useState } from 'react'
 import { IoArrowForward } from "react-icons/io5"
-import { Loader2 } from "lucide-react"
+import { Loader2, Mic } from "lucide-react"
 import axios from "axios"
 import { Doctor } from "./DoctorsList"
 import Image from "next/image"
@@ -32,7 +32,35 @@ function AddNewSession({ isOpen, onOpenChange, preSelectedDoctor }: AddNewSessio
   const [suggestedDocter, setSuggestedDocter] = useState<Doctor | undefined>(preSelectedDoctor || undefined);
   const [error, setError] = useState<string>();
   const [selectedDoctor, setSelectedDoctor] = useState<Doctor | undefined>(preSelectedDoctor || undefined);
+  const [isListening, setIsListening] = useState(false);
   const router = useRouter()
+
+  const startListening = () => {
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      const recognition = new SpeechRecognition();
+
+      recognition.continuous = false;
+      recognition.lang = 'en-US'; // Default to English, could make dynamic based on locale
+
+      recognition.onstart = () => {
+        setIsListening(true);
+      };
+
+      recognition.onend = () => {
+        setIsListening(false);
+      };
+
+      recognition.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        setNote((prev) => prev ? `${prev} ${transcript}` : transcript);
+      };
+
+      recognition.start();
+    } else {
+      alert("Browser does not support speech recognition.");
+    }
+  };
 
   const OnClickNext = async () => {
     if (!note || note.trim().length < 3) {
@@ -98,7 +126,18 @@ function AddNewSession({ isOpen, onOpenChange, preSelectedDoctor }: AddNewSessio
           <DialogDescription asChild>
             {!suggestedDocter ? (
               <div className="flex flex-col gap-2">
-                <h2 className="text-lg font-bold">Add Symptoms or Any Other Details</h2>
+                <div className="flex items-center justify-between">
+                  <h2 className="text-lg font-bold">Add Symptoms or Any Other Details</h2>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={startListening}
+                    className={isListening ? "text-red-500 animate-pulse" : ""}
+                    title="Speak symptoms"
+                  >
+                    <Mic className="h-5 w-5" />
+                  </Button>
+                </div>
                 <Textarea
                   placeholder="Enter your symptoms or any other details"
                   className="h-[200px]"

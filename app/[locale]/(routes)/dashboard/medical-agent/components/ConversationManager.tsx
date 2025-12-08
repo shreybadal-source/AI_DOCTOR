@@ -12,6 +12,7 @@ interface ConversationManagerProps {
   isCallActive: boolean;
   doctorPrompt: string;
   sessionId: string;
+  locale: string;
   onNewMessage: (message: Message) => void;
   onError: (error: string) => void;
 }
@@ -21,7 +22,7 @@ export interface ConversationManagerRef {
 }
 
 const ConversationManager = forwardRef<ConversationManagerRef, ConversationManagerProps>(
-  ({ isCallActive, doctorPrompt, sessionId, onNewMessage, onError }, ref) => {
+  ({ isCallActive, doctorPrompt, sessionId, locale, onNewMessage, onError }, ref) => {
     const [messages, setMessages] = useState<Message[]>([]);
     const lastTranscriptRef = useRef<string>("");
     const silenceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -29,9 +30,16 @@ const ConversationManager = forwardRef<ConversationManagerRef, ConversationManag
 
     useEffect(() => {
       if (isCallActive) {
+        let welcomeText = "Hello, I'm your AI medical assistant. Can you tell me Your Name, age and what is your problem?";
+        if (locale === 'hi') {
+          welcomeText = "नमस्ते, मैं आपका एआई मेडिकल अस्सिस्टेंट हूँ। क्या आप मुझे अपना नाम, उम्र और अपनी समस्या बता सकते हैं?";
+        } else if (locale === 'kn') {
+          welcomeText = "ನಮಸ್ಕಾರ, ನಾನು ನಿಮ್ಮ ಎಐ ವೈದ್ಯಕೀಯ ಸಹಾಯಕ. ನಿಮ್ಮ ಹೆಸರು, ವಯಸ್ಸು ಮತ್ತು ನಿಮ್ಮ ಸಮಸ್ಯೆ ಏನು ಎಂದು ಹೇಳಬಹುದೇ?";
+        }
+
         const initialMessage = {
           role: 'assistant' as const,
-          content: "Hello, I'm your AI medical assistant. Can you tell me Your Name, age and what is your problem?",
+          content: welcomeText,
           timestamp: Date.now()
         };
 
@@ -119,7 +127,8 @@ const ConversationManager = forwardRef<ConversationManagerRef, ConversationManag
 
         const response = await axios.post('/api/chat', {
           messages: conversationHistory,
-          doctorPrompt: doctorPrompt || "You are a helpful AI medical assistant."
+          doctorPrompt: doctorPrompt || "You are a helpful AI medical assistant.",
+          locale: locale
         });
 
         if (response.data && response.data.content) {
